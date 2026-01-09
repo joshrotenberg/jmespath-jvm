@@ -1,31 +1,122 @@
 # jmespath-jvm
 
-A fast, spec-compliant [JMESPath](https://jmespath.org/) implementation for the JVM with zero dependencies.
+A fast, spec-compliant [JMESPath](https://jmespath.org/) implementation for the JVM with zero dependencies in the core.
 
 ## Highlights
 
 - **Fast** - 4-10x faster parsing, 30-70% faster evaluation than alternatives
 - **Complete** - Full spec + JEP-12 (raw strings) + JEP-18 (lexical scoping)
-- **Zero dependencies** - Just the JDK, nothing else
+- **Zero dependencies** - Core library has no dependencies
 - **Extensible** - Add custom functions easily
 - **Any JSON library** - Jackson, Gson, or plain Maps - your choice
 
+## Modules
+
+| Module | Description |
+|--------|-------------|
+| `jmespath-core` | Core library, zero dependencies, uses Map/List |
+| `jmespath-jackson` | Jackson integration with `JacksonRuntime` |
+| `jmespath-gson` | Gson integration with `GsonRuntime` |
+
 ## Installation
+
+### With Jackson (recommended)
 
 ```xml
 <dependency>
     <groupId>io.github.joshrotenberg</groupId>
-    <artifactId>jmespath-jvm</artifactId>
+    <artifactId>jmespath-jackson</artifactId>
+    <version>1.0.3</version>
+</dependency>
+```
+
+### With Gson
+
+```xml
+<dependency>
+    <groupId>io.github.joshrotenberg</groupId>
+    <artifactId>jmespath-gson</artifactId>
+    <version>1.0.3</version>
+</dependency>
+```
+
+### Core only (no JSON library)
+
+```xml
+<dependency>
+    <groupId>io.github.joshrotenberg</groupId>
+    <artifactId>jmespath-core</artifactId>
     <version>1.0.3</version>
 </dependency>
 ```
 
 ## Quick Start
 
+### With Jackson
+
+```java
+import io.jmespath.JmesPath;
+import io.jmespath.Expression;
+import io.jmespath.jackson.JacksonRuntime;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+ObjectMapper mapper = new ObjectMapper();
+JacksonRuntime runtime = new JacksonRuntime();
+
+JsonNode data = mapper.readTree("""
+    {
+      "people": [
+        {"name": "Alice", "age": 25},
+        {"name": "Bob", "age": 30}
+      ]
+    }
+    """);
+
+// One-liner
+JsonNode result = JmesPath.search(runtime, "people[?age > `25`].name", data);
+// ["Bob"]
+
+// Compile once, run many
+Expression<JsonNode> expr = JmesPath.compile("people[*].name");
+JsonNode names = expr.evaluate(runtime, data);
+// ["Alice", "Bob"]
+```
+
+### With Gson
+
+```java
+import io.jmespath.JmesPath;
+import io.jmespath.Expression;
+import io.jmespath.gson.GsonRuntime;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
+GsonRuntime runtime = new GsonRuntime();
+
+JsonElement data = JsonParser.parseString("""
+    {
+      "people": [
+        {"name": "Alice", "age": 25},
+        {"name": "Bob", "age": 30}
+      ]
+    }
+    """);
+
+// One-liner
+JsonElement result = JmesPath.search(runtime, "people[?age > `25`].name", data);
+
+// Compile once, run many
+Expression<JsonElement> expr = JmesPath.compile("people[*].name");
+JsonElement names = expr.evaluate(runtime, data);
+```
+
+### Core (Map/List)
+
 ```java
 import io.jmespath.JmesPath;
 
-// One-liner
+// Using Map/List data structures
 Object result = JmesPath.search("people[?age > `21`].name", data);
 
 // Compile once, run many
@@ -80,26 +171,6 @@ Expression<Object> expr = JmesPath.compile("double(price)");
 expr.evaluate(runtime, data);
 ```
 
-## Custom JSON Libraries
-
-Default uses `Map`/`List`. For Jackson, Gson, etc., implement `Runtime<T>`:
-
-```java
-public class JacksonRuntime implements Runtime<JsonNode> {
-    @Override
-    public boolean isObject(JsonNode value) {
-        return value != null && value.isObject();
-    }
-    
-    @Override
-    public JsonNode getProperty(JsonNode object, String name) {
-        return object.get(name);
-    }
-    
-    // ... other methods
-}
-```
-
 ## Why Another JMESPath Library?
 
 The original [burtcorp/jmespath-java](https://github.com/burtcorp/jmespath-java) was archived in 2022 and is no longer maintained. It served the community well, but:
@@ -108,7 +179,7 @@ The original [burtcorp/jmespath-java](https://github.com/burtcorp/jmespath-java)
 - Missing JEP-12 (raw strings) and JEP-18 (lexical scoping)
 - No longer receiving updates or bug fixes
 
-This library is a clean-room implementation with a hand-written Pratt parser, zero dependencies, and full spec compliance including the latest JMESPath enhancements.
+This library is a clean-room implementation with a hand-written Pratt parser, zero dependencies in the core, and full spec compliance including the latest JMESPath enhancements.
 
 ## Performance
 

@@ -2,32 +2,105 @@
 
 ## Installation
 
-Add jmespath-jvm to your project:
+Choose the module that matches your JSON library:
 
-=== "Maven"
+=== "Jackson"
 
     ```xml
     <dependency>
         <groupId>io.github.joshrotenberg</groupId>
-        <artifactId>jmespath-jvm</artifactId>
+        <artifactId>jmespath-jackson</artifactId>
         <version>1.0.3</version>
     </dependency>
     ```
 
-=== "Gradle"
+    ```groovy
+    implementation 'io.github.joshrotenberg:jmespath-jackson:1.0.3'
+    ```
+
+=== "Gson"
+
+    ```xml
+    <dependency>
+        <groupId>io.github.joshrotenberg</groupId>
+        <artifactId>jmespath-gson</artifactId>
+        <version>1.0.3</version>
+    </dependency>
+    ```
 
     ```groovy
-    implementation 'io.github.joshrotenberg:jmespath-jvm:1.0.3'
+    implementation 'io.github.joshrotenberg:jmespath-gson:1.0.3'
+    ```
+
+=== "Core (Map/List)"
+
+    ```xml
+    <dependency>
+        <groupId>io.github.joshrotenberg</groupId>
+        <artifactId>jmespath-core</artifactId>
+        <version>1.0.3</version>
+    </dependency>
+    ```
+
+    ```groovy
+    implementation 'io.github.joshrotenberg:jmespath-core:1.0.3'
     ```
 
 ## Basic Usage
 
-### One-liner Queries
-
-The simplest way to use jmespath-jvm:
+### With Jackson
 
 ```java
 import io.jmespath.JmesPath;
+import io.jmespath.Expression;
+import io.jmespath.jackson.JacksonRuntime;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+ObjectMapper mapper = new ObjectMapper();
+JacksonRuntime runtime = new JacksonRuntime();
+
+JsonNode data = mapper.readTree("""
+    {"name": "Alice", "age": 30}
+    """);
+
+// One-liner query
+JsonNode name = JmesPath.search(runtime, "name", data);
+// "Alice"
+
+// Compiled expression (for repeated use)
+Expression<JsonNode> expr = JmesPath.compile("name");
+JsonNode result = expr.evaluate(runtime, data);
+```
+
+### With Gson
+
+```java
+import io.jmespath.JmesPath;
+import io.jmespath.Expression;
+import io.jmespath.gson.GsonRuntime;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
+GsonRuntime runtime = new GsonRuntime();
+
+JsonElement data = JsonParser.parseString("""
+    {"name": "Alice", "age": 30}
+    """);
+
+// One-liner query
+JsonElement name = JmesPath.search(runtime, "name", data);
+
+// Compiled expression (for repeated use)
+Expression<JsonElement> expr = JmesPath.compile("name");
+JsonElement result = expr.evaluate(runtime, data);
+```
+
+### With Core (Map/List)
+
+```java
+import io.jmespath.JmesPath;
+import io.jmespath.Expression;
 import java.util.*;
 
 // Create some data
@@ -35,26 +108,50 @@ Map<String, Object> data = new HashMap<>();
 data.put("name", "Alice");
 data.put("age", 30);
 
-// Query it
+// One-liner query
 String name = (String) JmesPath.search("name", data);  // "Alice"
+
+// Compiled expression (for repeated use)
+Expression<Object> expr = JmesPath.compile("name");
+Object result = expr.search(data);
 ```
 
 ### Compiled Expressions
 
 For repeated queries, compile once and reuse:
 
-```java
-import io.jmespath.JmesPath;
-import io.jmespath.Expression;
+=== "Jackson"
 
-// Compile the expression
-Expression<Object> expr = JmesPath.compile("people[?active].name");
+    ```java
+    Expression<JsonNode> expr = JmesPath.compile("people[?active].name");
 
-// Use it many times
-Object result1 = expr.search(dataset1);
-Object result2 = expr.search(dataset2);
-Object result3 = expr.search(dataset3);
-```
+    // Use it many times
+    JsonNode result1 = expr.evaluate(runtime, dataset1);
+    JsonNode result2 = expr.evaluate(runtime, dataset2);
+    JsonNode result3 = expr.evaluate(runtime, dataset3);
+    ```
+
+=== "Gson"
+
+    ```java
+    Expression<JsonElement> expr = JmesPath.compile("people[?active].name");
+
+    // Use it many times
+    JsonElement result1 = expr.evaluate(runtime, dataset1);
+    JsonElement result2 = expr.evaluate(runtime, dataset2);
+    JsonElement result3 = expr.evaluate(runtime, dataset3);
+    ```
+
+=== "Core"
+
+    ```java
+    Expression<Object> expr = JmesPath.compile("people[?active].name");
+
+    // Use it many times
+    Object result1 = expr.search(dataset1);
+    Object result2 = expr.search(dataset2);
+    Object result3 = expr.search(dataset3);
+    ```
 
 Compiled expressions are:
 
@@ -74,15 +171,15 @@ Compiled expressions are:
 // }
 
 // Get all names
-List<?> names = (List<?>) JmesPath.search("people[*].name", data);
+JmesPath.search("people[*].name", data);
 // ["Alice", "Bob"]
 
 // Get first person's name
-String first = (String) JmesPath.search("people[0].name", data);
+JmesPath.search("people[0].name", data);
 // "Alice"
 
 // Get last person
-Map<?,?> last = (Map<?,?>) JmesPath.search("people[-1]", data);
+JmesPath.search("people[-1]", data);
 // {"name": "Bob", "age": 30}
 ```
 
