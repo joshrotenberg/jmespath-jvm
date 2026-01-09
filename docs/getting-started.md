@@ -10,14 +10,14 @@ Add jmespath-jvm to your project:
     <dependency>
         <groupId>io.github.joshrotenberg</groupId>
         <artifactId>jmespath-jvm</artifactId>
-        <version>0.1.0</version>
+        <version>1.0.3</version>
     </dependency>
     ```
 
 === "Gradle"
 
     ```groovy
-    implementation 'io.github.joshrotenberg:jmespath-jvm:0.1.0'
+    implementation 'io.github.joshrotenberg:jmespath-jvm:1.0.3'
     ```
 
 ## Basic Usage

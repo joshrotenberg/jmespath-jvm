@@ -1,5 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.joshrotenberg</groupId>
@@ -8,8 +12,9 @@
     <packaging>jar</packaging>
 
     <name>jmespath-jvm</name>
-    <description>A fast, spec-compliant JMESPath implementation for the JVM with zero dependencies</description>
-    <url>https://github.com/jmespath/jmespath-jvm</url>
+    <description
+    >A fast, spec-compliant JMESPath implementation for the JVM with zero dependencies</description>
+    <url>https://github.com/joshrotenberg/jmespath-jvm</url>
     <inceptionYear>2024</inceptionYear>
 
     <licenses>
@@ -34,14 +39,16 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/jmespath/jmespath-jvm.git</connection>
-        <developerConnection>scm:git:ssh://github.com:jmespath/jmespath-jvm.git</developerConnection>
-        <url>https://github.com/jmespath/jmespath-jvm</url>
+        <connection
+        >scm:git:git://github.com/joshrotenberg/jmespath-jvm.git</connection>
+        <developerConnection
+        >scm:git:ssh://github.com:joshrotenberg/jmespath-jvm.git</developerConnection>
+        <url>https://github.com/joshrotenberg/jmespath-jvm</url>
     </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/jmespath/jmespath-jvm/issues</url>
+        <url>https://github.com/joshrotenberg/jmespath-jvm/issues</url>
     </issueManagement>
 
     <properties>
@@ -91,7 +98,8 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultImplementationEntries
+                            >true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
                 </configuration>

@@ -16,7 +16,7 @@ A fast, spec-compliant [JMESPath](https://jmespath.org/) implementation for the 
 <dependency>
     <groupId>io.github.joshrotenberg</groupId>
     <artifactId>jmespath-jvm</artifactId>
-    <version>0.1.0</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
@@ -129,6 +129,6 @@ Apache-2.0 OR MIT - your choice.
 
 ## Links
 
-- [Documentation](https://jmespath.github.io/jmespath-jvm/)
+- [Documentation](https://joshrotenberg.github.io/jmespath-jvm/)
 - [JMESPath Specification](https://jmespath.org/specification.html)
 - [JMESPath Tutorial](https://jmespath.org/tutorial.html)
