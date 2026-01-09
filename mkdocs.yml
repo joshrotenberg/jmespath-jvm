@@ -1,10 +1,10 @@
 site_name: jmespath-jvm
-site_url: https://jmespath.github.io/jmespath-jvm/
+site_url: https://joshrotenberg.github.io/jmespath-jvm/
 site_description: A fast, spec-compliant JMESPath implementation for the JVM
 site_author: Josh Rotenberg
 
-repo_name: jmespath/jmespath-jvm
-repo_url: https://github.com/jmespath/jmespath-jvm
+repo_name: joshrotenberg/jmespath-jvm
+repo_url: https://github.com/joshrotenberg/jmespath-jvm
 
 theme:
   name: material
@@ -56,4 +56,4 @@ markdown_extensions:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/jmespath/jmespath-jvm
+      link: https://github.com/joshrotenberg/jmespath-jvm
