@@ -20,6 +20,15 @@ public class ComparisonBenchmarkTest {
     private static final int WARMUP_ITERATIONS = 1000;
     private static final int BENCHMARK_ITERATIONS = 10000;
 
+    /** Java 8 compatible replacement for String.repeat() */
+    private static String repeat(String s, int count) {
+        StringBuilder sb = new StringBuilder(s.length() * count);
+        for (int i = 0; i < count; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
     // Our implementation
     private final MapRuntime ourRuntime = new MapRuntime();
 
@@ -54,13 +63,13 @@ public class ComparisonBenchmarkTest {
             "Burt (ns/op)",
             "Ratio"
         );
-        System.out.println("-".repeat(80));
+        System.out.println(repeat("-", 80));
 
         for (String expr : expressions) {
             runComparison(expr, ourData, burtData);
         }
 
-        System.out.println("-".repeat(80));
+        System.out.println(repeat("-", 80));
         System.out.println("\nRatio < 1.0 means our implementation is faster");
     }
 
@@ -133,7 +142,7 @@ public class ComparisonBenchmarkTest {
             "Burt (ns)",
             "Ratio"
         );
-        System.out.println("-".repeat(90));
+        System.out.println(repeat("-", 90));
 
         for (String expr : expressions) {
             // Warmup - ours
@@ -175,7 +184,7 @@ public class ComparisonBenchmarkTest {
             );
         }
 
-        System.out.println("-".repeat(90));
+        System.out.println(repeat("-", 90));
     }
 
     @Test
@@ -214,13 +223,13 @@ public class ComparisonBenchmarkTest {
             "Burt (ns)",
             "Ratio"
         );
-        System.out.println("-".repeat(95));
+        System.out.println(repeat("-", 95));
 
         for (String expr : expressions) {
             runComparison2(expr, ourData, burtData);
         }
 
-        System.out.println("-".repeat(95));
+        System.out.println(repeat("-", 95));
     }
 
     private void runComparison2(
@@ -289,7 +298,7 @@ public class ComparisonBenchmarkTest {
         System.out.println("Iterations: " + BENCHMARK_ITERATIONS);
         System.out.println();
         System.out.printf("%-70s %12s%n", "Expression", "Time (ns)");
-        System.out.println("-".repeat(85));
+        System.out.println(repeat("-", 85));
 
         for (String expr : expressions) {
             Expression<Object> compiled = JmesPath.compile(expr);
@@ -310,7 +319,7 @@ public class ComparisonBenchmarkTest {
             System.out.printf("%-70s %9.0f ns%n", truncate(expr, 70), nsPerOp);
         }
 
-        System.out.println("-".repeat(85));
+        System.out.println(repeat("-", 85));
     }
 
     private Object createComplexData() {
@@ -382,7 +391,7 @@ public class ComparisonBenchmarkTest {
             "Burt (ns/op)",
             "Ratio"
         );
-        System.out.println("-".repeat(60));
+        System.out.println(repeat("-", 60));
 
         for (int size : sizes) {
             Object ourData = createArrayData(size);
@@ -429,7 +438,7 @@ public class ComparisonBenchmarkTest {
             );
         }
 
-        System.out.println("-".repeat(60));
+        System.out.println(repeat("-", 60));
     }
 
     private Object createArrayData(int size) {
