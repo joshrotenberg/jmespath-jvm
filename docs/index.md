@@ -35,7 +35,7 @@ Object result = JmesPath.search("people[?age > `28`].name", data);
 
     ```xml
     <dependency>
-        <groupId>io.jmespath</groupId>
+        <groupId>io.github.joshrotenberg</groupId>
         <artifactId>jmespath-jvm</artifactId>
         <version>0.1.0</version>
     </dependency>
@@ -44,7 +44,7 @@ Object result = JmesPath.search("people[?age > `28`].name", data);
 === "Gradle"
 
     ```groovy
-    implementation 'io.jmespath:jmespath-jvm:0.1.0'
+    implementation 'io.github.joshrotenberg:jmespath-jvm:0.1.0'
     ```
 
 ## What is JMESPath?

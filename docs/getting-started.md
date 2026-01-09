@@ -8,7 +8,7 @@ Add jmespath-jvm to your project:
 
     ```xml
     <dependency>
-        <groupId>io.jmespath</groupId>
+        <groupId>io.github.joshrotenberg</groupId>
         <artifactId>jmespath-jvm</artifactId>
         <version>0.1.0</version>
     </dependency>
@@ -17,7 +17,7 @@ Add jmespath-jvm to your project:
 === "Gradle"
 
     ```groovy
-    implementation 'io.jmespath:jmespath-jvm:0.1.0'
+    implementation 'io.github.joshrotenberg:jmespath-jvm:0.1.0'
     ```
 
 ## Basic Usage

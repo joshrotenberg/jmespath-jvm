@@ -14,7 +14,7 @@ A fast, spec-compliant [JMESPath](https://jmespath.org/) implementation for the 
 
 ```xml
 <dependency>
-    <groupId>io.jmespath</groupId>
+    <groupId>io.github.joshrotenberg</groupId>
     <artifactId>jmespath-jvm</artifactId>
     <version>0.1.0</version>
 </dependency>
