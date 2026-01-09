@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/joshrotenberg/jmespath-jvm/compare/v1.0.2...v1.0.3) (2026-01-09)
+
+
+### Bug Fixes
+
+* migrate to Central Publishing Portal ([#11](https://github.com/joshrotenberg/jmespath-jvm/issues/11)) ([f663e3d](https://github.com/joshrotenberg/jmespath-jvm/commit/f663e3d38f4a1a01896085370969af475b9d3981))
+
 ## [1.0.2](https://github.com/joshrotenberg/jmespath-jvm/compare/v1.0.1...v1.0.2) (2026-01-09)
 
 
