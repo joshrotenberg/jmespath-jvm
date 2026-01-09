@@ -85,6 +85,11 @@ public class MapRuntime implements Runtime<Object> {
         return configuration.getFunctionRegistry();
     }
 
+    @Override
+    public boolean isSilentTypeErrors() {
+        return configuration.isSilentTypeErrors();
+    }
+
     // === Type Checking ===
 
     @Override

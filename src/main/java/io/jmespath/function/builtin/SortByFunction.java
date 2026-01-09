@@ -50,6 +50,9 @@ public final class SortByFunction implements Function {
 
             Type keyType = runtime.typeOf(keyValue);
             if (keyType != Type.STRING && keyType != Type.NUMBER) {
+                if (runtime.isSilentTypeErrors()) {
+                    return runtime.createNull();
+                }
                 throw new JmesPathException(
                     "sort_by() requires expression to evaluate to string or number, got " +
                         keyType,
@@ -59,6 +62,9 @@ public final class SortByFunction implements Function {
             if (expectedType == null) {
                 expectedType = keyType;
             } else if (keyType != expectedType) {
+                if (runtime.isSilentTypeErrors()) {
+                    return runtime.createNull();
+                }
                 throw new JmesPathException(
                     "sort_by() requires all values to be of the same type, got " +
                         expectedType +

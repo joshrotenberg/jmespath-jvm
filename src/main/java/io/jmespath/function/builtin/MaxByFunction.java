@@ -46,6 +46,9 @@ public final class MaxByFunction implements Function {
 
             Type valueType = runtime.typeOf(value);
             if (valueType != Type.STRING && valueType != Type.NUMBER) {
+                if (runtime.isSilentTypeErrors()) {
+                    return runtime.createNull();
+                }
                 throw new JmesPathException(
                     "max_by() requires expression to evaluate to string or number, got " +
                         valueType,
@@ -55,6 +58,9 @@ public final class MaxByFunction implements Function {
             if (expectedType == null) {
                 expectedType = valueType;
             } else if (valueType != expectedType) {
+                if (runtime.isSilentTypeErrors()) {
+                    return runtime.createNull();
+                }
                 throw new JmesPathException(
                     "max_by() requires all values to be of the same type, got " +
                         expectedType +

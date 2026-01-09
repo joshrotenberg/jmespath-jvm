@@ -2,7 +2,6 @@ package io.jmespath.function;
 
 import io.jmespath.JmesPathException;
 import io.jmespath.Runtime;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,10 @@ import java.util.Map;
  */
 public class DefaultFunctionRegistry implements FunctionRegistry {
 
-    private final Map<String, Function> functions = new HashMap<String, Function>();
+    private final Map<String, Function> functions = new HashMap<
+        String,
+        Function
+    >();
 
     /**
      * Creates a new registry with all standard functions.
@@ -57,7 +59,12 @@ public class DefaultFunctionRegistry implements FunctionRegistry {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T call(String name, Runtime<T> runtime, T current, List<Object> arguments) {
+    public <T> T call(
+        String name,
+        Runtime<T> runtime,
+        T current,
+        List<Object> arguments
+    ) {
         Function function = functions.get(name);
         if (function == null) {
             throw new JmesPathException(
@@ -67,9 +74,19 @@ public class DefaultFunctionRegistry implements FunctionRegistry {
         }
 
         // Validate arguments
-        function.getSignature().validate(name, runtime, arguments);
+        try {
+            function.getSignature().validate(name, runtime, arguments);
+        } catch (JmesPathException e) {
+            if (
+                e.getErrorType() == JmesPathException.ErrorType.TYPE &&
+                runtime.isSilentTypeErrors()
+            ) {
+                return runtime.createNull();
+            }
+            throw e;
+        }
 
-        // Call the function
+        // Call the function (it may also throw type errors which are handled by the function itself)
         return function.call(runtime, arguments, current);
     }
 

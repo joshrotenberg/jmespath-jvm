@@ -1,7 +1,6 @@
 package io.jmespath;
 
 import io.jmespath.function.FunctionRegistry;
-
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,6 @@ import java.util.Map;
  * @param <T> the JSON value type used by the underlying library
  */
 public interface Runtime<T> {
-
     // === Type Checking ===
 
     /**
@@ -278,4 +276,20 @@ public interface Runtime<T> {
      * @return the function registry
      */
     FunctionRegistry getFunctionRegistry();
+
+    // === Configuration ===
+
+    /**
+     * Returns whether type errors should be silent (return null) or throw exceptions.
+     *
+     * <p>When true, operations that would normally throw a type error
+     * (e.g., sort_by with mixed types) will return null instead.
+     *
+     * <p>Default implementations should return false.
+     *
+     * @return true if type errors should return null instead of throwing
+     */
+    default boolean isSilentTypeErrors() {
+        return false;
+    }
 }
