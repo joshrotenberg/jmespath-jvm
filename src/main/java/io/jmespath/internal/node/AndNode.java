@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 
 /**
  * Represents a logical AND expression.
@@ -30,12 +31,12 @@ public final class AndNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
-        T leftResult = left.evaluate(runtime, current);
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
+        T leftResult = left.evaluate(runtime, current, scope);
         if (!runtime.isTruthy(leftResult)) {
             return leftResult;
         }
-        return right.evaluate(runtime, current);
+        return right.evaluate(runtime, current, scope);
     }
 
     @Override

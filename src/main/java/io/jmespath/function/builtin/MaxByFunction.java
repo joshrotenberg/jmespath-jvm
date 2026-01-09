@@ -7,6 +7,7 @@ import io.jmespath.function.ArgumentType;
 import io.jmespath.function.Function;
 import io.jmespath.function.Signature;
 import io.jmespath.internal.node.ExpressionRefNode;
+import io.jmespath.internal.node.FunctionCallNode.ScopedExpressionRef;
 import java.util.List;
 
 /**
@@ -35,14 +36,25 @@ public final class MaxByFunction implements Function {
     @SuppressWarnings("unchecked")
     public <T> T call(Runtime<T> runtime, List<Object> args, T current) {
         T array = (T) args.get(0);
-        ExpressionRefNode expr = (ExpressionRefNode) args.get(1);
+        Object exprArg = args.get(1);
 
         T maxElement = null;
         T maxValue = null;
         Type expectedType = null;
 
         for (T elem : runtime.getArrayElements(array)) {
-            T value = expr.evaluateRef(runtime, elem);
+            T value;
+            if (exprArg instanceof ScopedExpressionRef) {
+                value = ((ScopedExpressionRef<T>) exprArg).evaluate(
+                    runtime,
+                    elem
+                );
+            } else {
+                value = ((ExpressionRefNode) exprArg).evaluateRef(
+                    runtime,
+                    elem
+                );
+            }
 
             Type valueType = runtime.typeOf(value);
             if (valueType != Type.STRING && valueType != Type.NUMBER) {

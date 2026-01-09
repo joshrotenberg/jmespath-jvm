@@ -24,7 +24,9 @@ public final class CompiledExpression<T> implements Expression<T> {
      */
     public CompiledExpression(String expressionString, Node root) {
         if (expressionString == null) {
-            throw new IllegalArgumentException("expressionString cannot be null");
+            throw new IllegalArgumentException(
+                "expressionString cannot be null"
+            );
         }
         if (root == null) {
             throw new IllegalArgumentException("root cannot be null");

@@ -1,7 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
-
+import io.jmespath.internal.Scope;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,26 +54,34 @@ public final class ProjectionNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
         T base = current;
         if (left != null) {
-            base = left.evaluate(runtime, current);
+            base = left.evaluate(runtime, current, scope);
         }
 
         if (!runtime.isArray(base)) {
             return runtime.createNull();
         }
 
-        List<T> results = new ArrayList<T>();
-        for (T element : runtime.getArrayElements(base)) {
-            T result;
-            if (right != null) {
-                result = right.evaluate(runtime, element);
-            } else {
-                result = element;
+        // Pre-size for expected output
+        int len = runtime.getArrayLength(base);
+        List<T> results = new ArrayList<T>(len > 0 ? len : 1);
+
+        // Split paths to avoid null checks in hot loop
+        if (right != null) {
+            for (T element : runtime.getArrayElements(base)) {
+                T result = right.evaluate(runtime, element, scope);
+                if (result != null) {
+                    results.add(result);
+                }
             }
-            if (!runtime.isNull(result)) {
-                results.add(result);
+        } else {
+            // No right side - just filter nulls from elements
+            for (T element : runtime.getArrayElements(base)) {
+                if (element != null) {
+                    results.add(element);
+                }
             }
         }
 

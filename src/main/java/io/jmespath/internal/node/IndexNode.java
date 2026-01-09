@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 
 /**
  * Represents array index access.
@@ -33,7 +34,7 @@ public final class IndexNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
         if (!runtime.isArray(current)) {
             return runtime.createNull();
         }

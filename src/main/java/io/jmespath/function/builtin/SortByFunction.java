@@ -7,6 +7,7 @@ import io.jmespath.function.ArgumentType;
 import io.jmespath.function.Function;
 import io.jmespath.function.Signature;
 import io.jmespath.internal.node.ExpressionRefNode;
+import io.jmespath.internal.node.FunctionCallNode.ScopedExpressionRef;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public final class SortByFunction implements Function {
     @SuppressWarnings("unchecked")
     public <T> T call(Runtime<T> runtime, List<Object> args, T current) {
         T array = (T) args.get(0);
-        ExpressionRefNode expr = (ExpressionRefNode) args.get(1);
+        Object exprArg = args.get(1);
 
         // Collect elements and their sort keys
         List<T> elements = new ArrayList<T>();
@@ -45,7 +46,18 @@ public final class SortByFunction implements Function {
 
         for (T elem : runtime.getArrayElements(array)) {
             elements.add(elem);
-            T keyValue = expr.evaluateRef(runtime, elem);
+            T keyValue;
+            if (exprArg instanceof ScopedExpressionRef) {
+                keyValue = ((ScopedExpressionRef<T>) exprArg).evaluate(
+                    runtime,
+                    elem
+                );
+            } else {
+                keyValue = ((ExpressionRefNode) exprArg).evaluateRef(
+                    runtime,
+                    elem
+                );
+            }
             keys.add(keyValue);
 
             Type keyType = runtime.typeOf(keyValue);

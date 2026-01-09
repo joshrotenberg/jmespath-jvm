@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 
 /**
  * Represents a pipe expression.
@@ -49,9 +50,9 @@ public final class PipeNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
-        T leftResult = left.evaluate(runtime, current);
-        return right.evaluate(runtime, leftResult);
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
+        T leftResult = left.evaluate(runtime, current, scope);
+        return right.evaluate(runtime, leftResult, scope);
     }
 
     @Override

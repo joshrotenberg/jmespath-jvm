@@ -262,6 +262,11 @@ public class MapRuntime implements Runtime<Object> {
 
     @Override
     public Object createArray(List<Object> elements) {
+        // If already an ArrayList, return as-is to avoid copy
+        // This is safe because we control the callers and they create fresh lists
+        if (elements instanceof ArrayList) {
+            return elements;
+        }
         return new ArrayList<Object>(elements);
     }
 

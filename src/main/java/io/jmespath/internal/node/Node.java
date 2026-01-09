@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 
 /**
  * Base interface for all AST nodes in a JMESPath expression.
@@ -9,20 +10,35 @@ import io.jmespath.Runtime;
  * Nodes are immutable after construction and can be safely shared
  * across threads.
  *
- * <p>Evaluation is performed by calling {@link #evaluate(Runtime, Object)}
- * with a runtime adapter and the current JSON value.
+ * <p>Evaluation is performed by calling {@link #evaluate(Runtime, Object, Scope)}
+ * with a runtime adapter, the current JSON value, and a variable scope.
  */
 public interface Node {
-
     /**
-     * Evaluates this node against the given value.
+     * Evaluates this node against the given value with an empty scope.
+     *
+     * <p>This is a convenience method equivalent to calling
+     * {@code evaluate(runtime, current, Scope.empty())}.
      *
      * @param <T> the JSON value type used by the runtime
      * @param runtime the runtime adapter for JSON operations
      * @param current the current JSON value being evaluated
      * @return the result of evaluating this node
      */
-    <T> T evaluate(Runtime<T> runtime, T current);
+    default <T> T evaluate(Runtime<T> runtime, T current) {
+        return evaluate(runtime, current, Scope.empty());
+    }
+
+    /**
+     * Evaluates this node against the given value with variable scope.
+     *
+     * @param <T> the JSON value type used by the runtime
+     * @param runtime the runtime adapter for JSON operations
+     * @param current the current JSON value being evaluated
+     * @param scope the current variable scope for lexical bindings
+     * @return the result of evaluating this node
+     */
+    <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope);
 
     /**
      * Returns true if this node creates a projection.

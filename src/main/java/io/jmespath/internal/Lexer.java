@@ -166,8 +166,10 @@ public final class Lexer {
                         startColumn
                     );
                 }
-                throw error(
-                    "Expected '=' after '='",
+                // Single '=' for let bindings (JEP-18)
+                return new Token(
+                    TokenType.ASSIGN,
+                    "=",
                     startPos,
                     startLine,
                     startColumn
@@ -320,6 +322,9 @@ public final class Lexer {
             case '-':
                 // Negative number
                 return number(startPos, startLine, startColumn);
+            case '$':
+                // Variable reference (JEP-18)
+                return variable(startPos, startLine, startColumn);
             default:
                 if (isDigit(c)) {
                     return number(startPos, startLine, startColumn);
@@ -390,9 +395,75 @@ public final class Lexer {
             }
         }
         String name = sb.toString();
+
+        // Check for keywords (JEP-18)
+        if (name.equals("let")) {
+            return new Token(
+                TokenType.LET,
+                name,
+                startPos,
+                startLine,
+                startColumn
+            );
+        }
+        if (name.equals("in")) {
+            return new Token(
+                TokenType.IN,
+                name,
+                startPos,
+                startLine,
+                startColumn
+            );
+        }
+
         return new Token(
             TokenType.IDENTIFIER,
             name,
+            name,
+            startPos,
+            startLine,
+            startColumn
+        );
+    }
+
+    private Token variable(int startPos, int startLine, int startColumn) {
+        advance(); // consume '$'
+        StringBuilder sb = new StringBuilder();
+
+        // Variable name must start with alpha or underscore
+        if (pos >= input.length()) {
+            throw error(
+                "Expected variable name after '$'",
+                startPos,
+                startLine,
+                startColumn
+            );
+        }
+
+        char first = input.charAt(pos);
+        if (!isAlpha(first) && first != '_') {
+            throw error(
+                "Variable name must start with letter or underscore",
+                startPos,
+                startLine,
+                startColumn
+            );
+        }
+
+        while (pos < input.length()) {
+            char c = input.charAt(pos);
+            if (isAlpha(c) || isDigit(c) || c == '_') {
+                sb.append(c);
+                advance();
+            } else {
+                break;
+            }
+        }
+
+        String name = sb.toString();
+        return new Token(
+            TokenType.VARIABLE,
+            "$" + name,
             name,
             startPos,
             startLine,

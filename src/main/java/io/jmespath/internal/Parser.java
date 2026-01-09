@@ -2,6 +2,7 @@ package io.jmespath.internal;
 
 import io.jmespath.JmesPathException;
 import io.jmespath.internal.node.*;
+import io.jmespath.internal.node.LetNode.Binding;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,6 +132,14 @@ public final class Parser {
             case RAW_STRING:
                 advance();
                 return new RawStringNode(token.stringValue());
+            case VARIABLE:
+                // Variable reference $name (JEP-18)
+                advance();
+                return new VariableRefNode(token.stringValue());
+            case LET:
+                // Let expression (JEP-18)
+                advance();
+                return parseLetExpression();
             case FLATTEN:
                 advance();
                 return parseFlatten(null);
@@ -878,6 +887,57 @@ public final class Parser {
             return new ExpressionRefNode(expr);
         }
         return expression(0);
+    }
+
+    /**
+     * Parses a let expression (JEP-18).
+     * Syntax: let $var1 = expr1, $var2 = expr2 in body
+     */
+    private Node parseLetExpression() {
+        List<Binding> bindings = new ArrayList<Binding>();
+
+        // Parse first binding
+        bindings.add(parseLetBinding());
+
+        // Parse additional bindings separated by comma
+        while (current.is(TokenType.COMMA)) {
+            advance();
+            bindings.add(parseLetBinding());
+        }
+
+        // Expect 'in' keyword
+        if (!current.is(TokenType.IN)) {
+            throw error("Expected 'in' after let bindings");
+        }
+        advance();
+
+        // Parse body expression
+        Node body = expression(0);
+
+        return new LetNode(bindings, body);
+    }
+
+    /**
+     * Parses a single let binding: $name = expression
+     */
+    private Binding parseLetBinding() {
+        // Expect variable
+        if (!current.is(TokenType.VARIABLE)) {
+            throw error("Expected variable in let binding");
+        }
+        String name = current.stringValue();
+        advance();
+
+        // Expect '='
+        if (!current.is(TokenType.ASSIGN)) {
+            throw error("Expected '=' after variable in let binding");
+        }
+        advance();
+
+        // Parse value expression
+        Node value = expression(0);
+
+        return new Binding(name, value);
     }
 
     /**

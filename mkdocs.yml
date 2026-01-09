@@ -1,0 +1,59 @@
+site_name: jmespath-jvm
+site_url: https://jmespath.github.io/jmespath-jvm/
+site_description: A fast, spec-compliant JMESPath implementation for the JVM
+site_author: Josh Rotenberg
+
+repo_name: jmespath/jmespath-jvm
+repo_url: https://github.com/jmespath/jmespath-jvm
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - content.code.copy
+    - content.code.annotate
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - User Guide:
+      - Basic Queries: guide/basics.md
+      - Filters: guide/filters.md
+      - Projections: guide/projections.md
+      - Functions: guide/functions.md
+      - Pipes: guide/pipes.md
+  - Advanced:
+      - Custom Functions: advanced/custom-functions.md
+      - Custom Runtimes: advanced/custom-runtimes.md
+      - Raw Strings (JEP-12): advanced/raw-strings.md
+      - Lexical Scoping (JEP-18): advanced/lexical-scoping.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jmespath/jmespath-jvm

@@ -26,6 +26,7 @@ public enum TokenType {
     OR("||"),
     AND("&&"),
     NOT("!"),
+    ASSIGN("="),
     EQ("=="),
     NE("!="),
     LT("<"),
@@ -42,6 +43,11 @@ public enum TokenType {
     STRING("string"),
     RAW_STRING("raw_string"),
     LITERAL("literal"),
+    VARIABLE("variable"),
+
+    // Keywords (JEP-18 lexical scoping)
+    LET("let"),
+    IN("in"),
 
     // Special
     EOF("end of expression"),

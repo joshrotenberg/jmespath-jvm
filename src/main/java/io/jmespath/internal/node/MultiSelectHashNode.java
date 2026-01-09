@@ -1,7 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
-
+import io.jmespath.internal.Scope;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +20,7 @@ public final class MultiSelectHashNode implements Node {
      * A key-value pair in a multi-select hash.
      */
     public static final class Entry {
+
         private final String key;
         private final Node value;
 
@@ -31,7 +32,9 @@ public final class MultiSelectHashNode implements Node {
          */
         public Entry(String key, Node value) {
             if (key == null || value == null) {
-                throw new IllegalArgumentException("key and value cannot be null");
+                throw new IllegalArgumentException(
+                    "key and value cannot be null"
+                );
             }
             this.key = key;
             this.value = value;
@@ -70,7 +73,9 @@ public final class MultiSelectHashNode implements Node {
      */
     public MultiSelectHashNode(List<Entry> entries) {
         if (entries == null || entries.isEmpty()) {
-            throw new IllegalArgumentException("entries cannot be null or empty");
+            throw new IllegalArgumentException(
+                "entries cannot be null or empty"
+            );
         }
         this.entries = new ArrayList<Entry>(entries);
     }
@@ -85,12 +90,15 @@ public final class MultiSelectHashNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
-        Map<String, T> result = new LinkedHashMap<String, T>();
-        for (int i = 0; i < entries.size(); i++) {
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
+        int size = entries.size();
+        Map<String, T> result = new LinkedHashMap<String, T>(size);
+        for (int i = 0; i < size; i++) {
             Entry entry = entries.get(i);
-            T value = entry.getValue().evaluate(runtime, current);
-            result.put(entry.getKey(), value);
+            result.put(
+                entry.getKey(),
+                entry.getValue().evaluate(runtime, current, scope)
+            );
         }
         return runtime.createObject(result);
     }

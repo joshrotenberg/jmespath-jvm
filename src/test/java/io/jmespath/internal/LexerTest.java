@@ -761,20 +761,28 @@ class LexerTest {
     class ErrorCases {
 
         @Test
-        void singleEquals() {
-            JmesPathException e = assertThrows(JmesPathException.class, () ->
-                single("=")
-            );
-            assertTrue(e.getMessage().contains("Expected '='"));
-            assertEquals(JmesPathException.ErrorType.SYNTAX, e.getErrorType());
+        void singleEqualsIsAssignToken() {
+            // Single '=' is now valid as ASSIGN token for let bindings (JEP-18)
+            Token token = single("=");
+            assertEquals(TokenType.ASSIGN, token.type());
+            assertEquals("=", token.text());
         }
 
         @Test
-        void unexpectedCharacter() {
+        void dollarStartsVariable() {
+            // '$' is now valid as start of variable reference (JEP-18)
+            Token token = single("$foo");
+            assertEquals(TokenType.VARIABLE, token.type());
+            assertEquals("foo", token.stringValue());
+        }
+
+        @Test
+        void dollarAloneIsError() {
+            // '$' alone (not followed by identifier) is an error
             JmesPathException e = assertThrows(JmesPathException.class, () ->
                 single("$")
             );
-            assertTrue(e.getMessage().contains("Unexpected character"));
+            assertTrue(e.getMessage().contains("variable name"));
             assertEquals(JmesPathException.ErrorType.SYNTAX, e.getErrorType());
         }
 
@@ -796,8 +804,9 @@ class LexerTest {
 
         @Test
         void errorIncludesPosition() {
+            // Use a truly invalid character sequence
             try {
-                tokenize("foo.bar.$baz");
+                tokenize("foo.bar.#baz");
                 fail("Expected exception");
             } catch (JmesPathException e) {
                 assertTrue(e.hasPosition());

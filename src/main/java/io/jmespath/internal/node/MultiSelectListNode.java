@@ -1,7 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
-
+import io.jmespath.internal.Scope;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +23,9 @@ public final class MultiSelectListNode implements Node {
      */
     public MultiSelectListNode(List<Node> elements) {
         if (elements == null || elements.isEmpty()) {
-            throw new IllegalArgumentException("elements cannot be null or empty");
+            throw new IllegalArgumentException(
+                "elements cannot be null or empty"
+            );
         }
         this.elements = new ArrayList<Node>(elements);
     }
@@ -38,10 +40,11 @@ public final class MultiSelectListNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
-        List<T> results = new ArrayList<T>();
-        for (int i = 0; i < elements.size(); i++) {
-            results.add(elements.get(i).evaluate(runtime, current));
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
+        int size = elements.size();
+        List<T> results = new ArrayList<T>(size);
+        for (int i = 0; i < size; i++) {
+            results.add(elements.get(i).evaluate(runtime, current, scope));
         }
         return runtime.createArray(results);
     }

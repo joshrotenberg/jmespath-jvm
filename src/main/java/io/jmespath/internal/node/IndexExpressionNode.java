@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 
 /**
  * Represents bracket access with an expression, used for chaining.
@@ -53,15 +54,15 @@ public final class IndexExpressionNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
         T base = current;
         if (left != null) {
-            base = left.evaluate(runtime, current);
+            base = left.evaluate(runtime, current, scope);
             if (runtime.isNull(base)) {
                 return runtime.createNull();
             }
         }
-        return bracket.evaluate(runtime, base);
+        return bracket.evaluate(runtime, base, scope);
     }
 
     @Override

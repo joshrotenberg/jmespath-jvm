@@ -4,7 +4,7 @@ import io.jmespath.JmesPathException;
 import io.jmespath.Runtime;
 import io.jmespath.Type;
 import io.jmespath.internal.node.ExpressionRefNode;
-
+import io.jmespath.internal.node.FunctionCallNode.ScopedExpressionRef;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +72,11 @@ public final class Signature {
      * @param args the arguments to validate
      * @throws JmesPathException if validation fails
      */
-    public <T> void validate(String functionName, Runtime<T> runtime, List<Object> args) {
+    public <T> void validate(
+        String functionName,
+        Runtime<T> runtime,
+        List<Object> args
+    ) {
         int minArgs = 0;
         int maxArgs = hasVariadic ? Integer.MAX_VALUE : arguments.size();
 
@@ -85,13 +89,21 @@ public final class Signature {
         // Check arity
         if (args.size() < minArgs) {
             throw new JmesPathException(
-                functionName + "() takes at least " + minArgs + " argument(s), got " + args.size(),
+                functionName +
+                    "() takes at least " +
+                    minArgs +
+                    " argument(s), got " +
+                    args.size(),
                 JmesPathException.ErrorType.ARITY
             );
         }
         if (args.size() > maxArgs) {
             throw new JmesPathException(
-                functionName + "() takes at most " + maxArgs + " argument(s), got " + args.size(),
+                functionName +
+                    "() takes at most " +
+                    maxArgs +
+                    " argument(s), got " +
+                    args.size(),
                 JmesPathException.ErrorType.ARITY
             );
         }
@@ -110,8 +122,13 @@ public final class Signature {
             Object value = args.get(i);
             if (!matchesType(runtime, value, arg.types)) {
                 throw new JmesPathException(
-                    functionName + "() argument " + (i + 1) + " must be " + describeTypes(arg.types) +
-                    ", got " + describeValue(runtime, value),
+                    functionName +
+                        "() argument " +
+                        (i + 1) +
+                        " must be " +
+                        describeTypes(arg.types) +
+                        ", got " +
+                        describeValue(runtime, value),
                     JmesPathException.ErrorType.TYPE
                 );
             }
@@ -119,7 +136,11 @@ public final class Signature {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> boolean matchesType(Runtime<T> runtime, Object value, ArgumentType[] types) {
+    private <T> boolean matchesType(
+        Runtime<T> runtime,
+        Object value,
+        ArgumentType[] types
+    ) {
         for (int i = 0; i < types.length; i++) {
             ArgumentType type = types[i];
             switch (type) {
@@ -151,13 +172,18 @@ public final class Signature {
                     break;
                 case EXPRESSION_REF:
                     if (value instanceof ExpressionRefNode) return true;
+                    if (value instanceof ScopedExpressionRef) return true;
                     break;
             }
         }
         return false;
     }
 
-    private <T> boolean isArrayOf(Runtime<T> runtime, T value, Type elementType) {
+    private <T> boolean isArrayOf(
+        Runtime<T> runtime,
+        T value,
+        Type elementType
+    ) {
         if (!runtime.isArray(value)) {
             return false;
         }
@@ -192,6 +218,9 @@ public final class Signature {
         if (value instanceof ExpressionRefNode) {
             return "expression";
         }
+        if (value instanceof ScopedExpressionRef) {
+            return "expression";
+        }
         return runtime.typeOf((T) value).typeName();
     }
 
@@ -199,6 +228,7 @@ public final class Signature {
      * A single argument in a signature.
      */
     private static final class Argument {
+
         final ArgumentType[] types;
         final boolean optional;
 
@@ -212,11 +242,11 @@ public final class Signature {
      * Builder for creating signatures.
      */
     public static final class Builder {
+
         private final List<Argument> arguments = new ArrayList<Argument>();
         private boolean hasVariadic = false;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         /**
          * Adds a required argument accepting the given types.
@@ -226,7 +256,9 @@ public final class Signature {
          */
         public Builder required(ArgumentType... types) {
             if (hasVariadic) {
-                throw new IllegalStateException("Cannot add arguments after variadic");
+                throw new IllegalStateException(
+                    "Cannot add arguments after variadic"
+                );
             }
             arguments.add(new Argument(types, false));
             return this;
@@ -240,7 +272,9 @@ public final class Signature {
          */
         public Builder optional(ArgumentType... types) {
             if (hasVariadic) {
-                throw new IllegalStateException("Cannot add arguments after variadic");
+                throw new IllegalStateException(
+                    "Cannot add arguments after variadic"
+                );
             }
             arguments.add(new Argument(types, true));
             return this;
@@ -256,7 +290,9 @@ public final class Signature {
          */
         public Builder variadic(ArgumentType... types) {
             if (hasVariadic) {
-                throw new IllegalStateException("Only one variadic argument allowed");
+                throw new IllegalStateException(
+                    "Only one variadic argument allowed"
+                );
             }
             arguments.add(new Argument(types, true));
             hasVariadic = true;
@@ -269,7 +305,10 @@ public final class Signature {
          * @return the signature
          */
         public Signature build() {
-            return new Signature(new ArrayList<Argument>(arguments), hasVariadic);
+            return new Signature(
+                new ArrayList<Argument>(arguments),
+                hasVariadic
+            );
         }
     }
 }

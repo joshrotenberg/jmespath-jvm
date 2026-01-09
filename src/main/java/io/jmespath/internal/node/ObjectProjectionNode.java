@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +53,10 @@ public final class ObjectProjectionNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
         T base = current;
         if (left != null) {
-            base = left.evaluate(runtime, current);
+            base = left.evaluate(runtime, current, scope);
         }
 
         if (!runtime.isObject(base)) {
@@ -66,7 +67,7 @@ public final class ObjectProjectionNode implements Node {
         for (T value : runtime.getObjectValues(base)) {
             T result;
             if (right != null) {
-                result = right.evaluate(runtime, value);
+                result = right.evaluate(runtime, value, scope);
             } else {
                 result = value;
             }

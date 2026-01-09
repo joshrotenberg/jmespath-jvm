@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 
 /**
  * Represents a property access by identifier name.
@@ -57,10 +58,8 @@ public final class IdentifierNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
-        if (!runtime.isObject(current)) {
-            return runtime.createNull();
-        }
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
+        // getProperty already returns null for non-objects, no need to check twice
         return runtime.getProperty(current, name);
     }
 

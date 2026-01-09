@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 
 /**
  * Represents a comparison expression.
@@ -51,7 +52,9 @@ public final class ComparisonNode implements Node {
      */
     public ComparisonNode(Operator operator, Node left, Node right) {
         if (operator == null || left == null || right == null) {
-            throw new IllegalArgumentException("operator, left, and right cannot be null");
+            throw new IllegalArgumentException(
+                "operator, left, and right cannot be null"
+            );
         }
         this.operator = operator;
         this.left = left;
@@ -68,46 +71,63 @@ public final class ComparisonNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
-        T leftValue = left.evaluate(runtime, current);
-        T rightValue = right.evaluate(runtime, current);
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
+        T leftValue = left.evaluate(runtime, current, scope);
+        T rightValue = right.evaluate(runtime, current, scope);
 
-        switch (operator) {
-            case EQ:
-                return runtime.createBoolean(runtime.deepEquals(leftValue, rightValue));
-            case NE:
-                return runtime.createBoolean(!runtime.deepEquals(leftValue, rightValue));
-            case LT:
-            case LE:
-            case GT:
-            case GE:
-                return evaluateOrdering(runtime, leftValue, rightValue);
-            default:
-                return runtime.createNull();
+        // Fast path for equality - most common in filters
+        if (operator == Operator.EQ) {
+            return runtime.createBoolean(
+                runtime.deepEquals(leftValue, rightValue)
+            );
         }
+        if (operator == Operator.NE) {
+            return runtime.createBoolean(
+                !runtime.deepEquals(leftValue, rightValue)
+            );
+        }
+
+        // Ordering comparisons - check types once
+        return evaluateOrdering(runtime, leftValue, rightValue);
     }
 
-    private <T> T evaluateOrdering(Runtime<T> runtime, T leftValue, T rightValue) {
+    private <T> T evaluateOrdering(
+        Runtime<T> runtime,
+        T leftValue,
+        T rightValue
+    ) {
         // Ordering comparisons only work on same types (number or string)
-        if (runtime.isNumber(leftValue) && runtime.isNumber(rightValue)) {
+        // Check number first as it's more common in filters like "age > 18"
+        if (runtime.isNumber(leftValue)) {
+            if (!runtime.isNumber(rightValue)) {
+                return runtime.createNull();
+            }
             int cmp = runtime.compare(leftValue, rightValue);
             return runtime.createBoolean(checkOrdering(cmp));
         }
-        if (runtime.isString(leftValue) && runtime.isString(rightValue)) {
+        if (runtime.isString(leftValue)) {
+            if (!runtime.isString(rightValue)) {
+                return runtime.createNull();
+            }
             int cmp = runtime.compare(leftValue, rightValue);
             return runtime.createBoolean(checkOrdering(cmp));
         }
-        // Type mismatch - return null
+        // Not a comparable type
         return runtime.createNull();
     }
 
     private boolean checkOrdering(int cmp) {
         switch (operator) {
-            case LT: return cmp < 0;
-            case LE: return cmp <= 0;
-            case GT: return cmp > 0;
-            case GE: return cmp >= 0;
-            default: return false;
+            case LT:
+                return cmp < 0;
+            case LE:
+                return cmp <= 0;
+            case GT:
+                return cmp > 0;
+            case GE:
+                return cmp >= 0;
+            default:
+                return false;
         }
     }
 

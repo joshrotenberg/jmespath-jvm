@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 
 /**
  * Represents an expression reference (&amp;expression).
@@ -37,7 +38,7 @@ public final class ExpressionRefNode implements Node {
     }
 
     /**
-     * Evaluates the referenced expression against a value.
+     * Evaluates the referenced expression against a value with empty scope.
      *
      * <p>This method is used by functions that accept expression references.
      *
@@ -47,11 +48,27 @@ public final class ExpressionRefNode implements Node {
      * @return the result
      */
     public <T> T evaluateRef(Runtime<T> runtime, T value) {
-        return expression.evaluate(runtime, value);
+        return expression.evaluate(runtime, value, Scope.empty());
+    }
+
+    /**
+     * Evaluates the referenced expression against a value with the given scope.
+     *
+     * <p>This method is used by functions that accept expression references
+     * and need to preserve lexical scope.
+     *
+     * @param <T> the JSON value type
+     * @param runtime the runtime
+     * @param value the value to evaluate against
+     * @param scope the variable scope
+     * @return the result
+     */
+    public <T> T evaluateRef(Runtime<T> runtime, T value, Scope<T> scope) {
+        return expression.evaluate(runtime, value, scope);
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
         // Expression references don't directly evaluate to a JSON value.
         // They're handled specially by function call nodes.
         // Returning null here - the actual behavior depends on usage context.

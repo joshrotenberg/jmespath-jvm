@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 
 /**
  * Represents a sub-expression (dot notation).
@@ -48,12 +49,12 @@ public final class SubExpressionNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
-        T leftResult = left.evaluate(runtime, current);
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
+        T leftResult = left.evaluate(runtime, current, scope);
         if (runtime.isNull(leftResult)) {
             return runtime.createNull();
         }
-        return right.evaluate(runtime, leftResult);
+        return right.evaluate(runtime, leftResult, scope);
     }
 
     @Override

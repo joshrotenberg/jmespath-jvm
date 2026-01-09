@@ -5,6 +5,7 @@ import io.jmespath.function.ArgumentType;
 import io.jmespath.function.Function;
 import io.jmespath.function.Signature;
 import io.jmespath.internal.node.ExpressionRefNode;
+import io.jmespath.internal.node.FunctionCallNode.ScopedExpressionRef;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +33,23 @@ public final class MapFunction implements Function {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T call(Runtime<T> runtime, List<Object> args, T current) {
-        ExpressionRefNode expr = (ExpressionRefNode) args.get(0);
+        Object exprArg = args.get(0);
         T array = (T) args.get(1);
 
         List<T> result = new ArrayList<T>();
         for (T elem : runtime.getArrayElements(array)) {
-            T mapped = expr.evaluateRef(runtime, elem);
+            T mapped;
+            if (exprArg instanceof ScopedExpressionRef) {
+                mapped = ((ScopedExpressionRef<T>) exprArg).evaluate(
+                    runtime,
+                    elem
+                );
+            } else {
+                mapped = ((ExpressionRefNode) exprArg).evaluateRef(
+                    runtime,
+                    elem
+                );
+            }
             result.add(mapped);
         }
 

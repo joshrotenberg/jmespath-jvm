@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 
 /**
  * Represents a logical NOT expression.
@@ -35,8 +36,8 @@ public final class NotNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
-        T result = expression.evaluate(runtime, current);
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
+        T result = expression.evaluate(runtime, current, scope);
         return runtime.createBoolean(!runtime.isTruthy(result));
     }
 

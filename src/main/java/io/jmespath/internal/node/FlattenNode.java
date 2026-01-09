@@ -1,7 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
-
+import io.jmespath.internal.Scope;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,17 +42,20 @@ public final class FlattenNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
         T base = current;
         if (expression != null) {
-            base = expression.evaluate(runtime, current);
+            base = expression.evaluate(runtime, current, scope);
         }
 
         if (!runtime.isArray(base)) {
             return runtime.createNull();
         }
 
-        List<T> result = new ArrayList<T>();
+        // Estimate flattened size - assume some nesting
+        int baseLen = runtime.getArrayLength(base);
+        List<T> result = new ArrayList<T>(baseLen * 2);
+
         for (T element : runtime.getArrayElements(base)) {
             if (runtime.isArray(element)) {
                 // Flatten one level

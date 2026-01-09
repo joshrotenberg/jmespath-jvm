@@ -1,6 +1,7 @@
 package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
+import io.jmespath.internal.Scope;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,26 +68,41 @@ public final class FilterNode implements Node {
     }
 
     @Override
-    public <T> T evaluate(Runtime<T> runtime, T current) {
+    public <T> T evaluate(Runtime<T> runtime, T current, Scope<T> scope) {
         T base = current;
         if (left != null) {
-            base = left.evaluate(runtime, current);
+            base = left.evaluate(runtime, current, scope);
         }
 
         if (!runtime.isArray(base)) {
             return runtime.createNull();
         }
 
-        List<T> filtered = new ArrayList<T>();
-        for (T element : runtime.getArrayElements(base)) {
-            T conditionResult = condition.evaluate(runtime, element);
-            if (runtime.isTruthy(conditionResult)) {
-                if (right != null) {
-                    T projected = right.evaluate(runtime, element);
-                    if (!runtime.isNull(projected)) {
+        // Pre-size to avoid resizing - most filters keep some elements
+        int len = runtime.getArrayLength(base);
+        List<T> filtered = new ArrayList<T>(len > 0 ? len : 1);
+
+        // Avoid repeated null checks in hot loop by splitting paths
+        if (right != null) {
+            for (T element : runtime.getArrayElements(base)) {
+                if (
+                    runtime.isTruthy(
+                        condition.evaluate(runtime, element, scope)
+                    )
+                ) {
+                    T projected = right.evaluate(runtime, element, scope);
+                    if (projected != null) {
                         filtered.add(projected);
                     }
-                } else {
+                }
+            }
+        } else {
+            for (T element : runtime.getArrayElements(base)) {
+                if (
+                    runtime.isTruthy(
+                        condition.evaluate(runtime, element, scope)
+                    )
+                ) {
                     filtered.add(element);
                 }
             }
