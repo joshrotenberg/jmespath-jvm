@@ -37,14 +37,14 @@ Object result = JmesPath.search("people[?age > `28`].name", data);
     <dependency>
         <groupId>io.github.joshrotenberg</groupId>
         <artifactId>jmespath-jvm</artifactId>
-        <version>0.1.0</version>
+        <version>1.0.3</version>
     </dependency>
     ```
 
 === "Gradle"
 
     ```groovy
-    implementation 'io.github.joshrotenberg:jmespath-jvm:0.1.0'
+    implementation 'io.github.joshrotenberg:jmespath-jvm:1.0.3'
     ```
 
 ## What is JMESPath?
@@ -68,4 +68,4 @@ Learn more at [jmespath.org](https://jmespath.org/).
 
 - [Getting Started](getting-started.md) - Installation and first queries
 - [User Guide](guide/basics.md) - Learn the query language
-- [API Reference](https://jmespath.github.io/jmespath-jvm/api/) - Javadoc documentation
+- [API Reference](https://joshrotenberg.github.io/jmespath-jvm/api/) - Javadoc documentation
