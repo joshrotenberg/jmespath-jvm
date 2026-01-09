@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/joshrotenberg/jmespath-jvm/compare/v1.0.1...v1.0.2) (2026-01-09)
+
+
+### Bug Fixes
+
+* manually import GPG key and disable agent ([#8](https://github.com/joshrotenberg/jmespath-jvm/issues/8)) ([5681811](https://github.com/joshrotenberg/jmespath-jvm/commit/5681811663830677cf50ff6565aea2b7b17aa57d))
+
 ## [1.0.1](https://github.com/joshrotenberg/jmespath-jvm/compare/v1.0.0...v1.0.1) (2026-01-09)
 
 
