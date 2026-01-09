@@ -100,9 +100,19 @@ public class JacksonRuntime implements Runtime<JsonNode> {
 }
 ```
 
+## Why Another JMESPath Library?
+
+The original [burtcorp/jmespath-java](https://github.com/burtcorp/jmespath-java) was archived in 2022 and is no longer maintained. It served the community well, but:
+
+- Uses ANTLR for parsing (heavyweight dependency, slower)
+- Missing JEP-12 (raw strings) and JEP-18 (lexical scoping)
+- No longer receiving updates or bug fixes
+
+This library is a clean-room implementation with a hand-written Pratt parser, zero dependencies, and full spec compliance including the latest JMESPath enhancements.
+
 ## Performance
 
-Compared to the archived [burtcorp/jmespath-java](https://github.com/burtcorp/jmespath-java):
+Compared to [burtcorp/jmespath-java](https://github.com/burtcorp/jmespath-java):
 
 | Operation | Improvement |
 |-----------|-------------|
