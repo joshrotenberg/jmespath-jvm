@@ -2,7 +2,6 @@ package io.jmespath.internal.node;
 
 import io.jmespath.Runtime;
 import io.jmespath.internal.Scope;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +21,7 @@ public final class LetNode implements Node {
      * A variable binding in a let expression.
      */
     public static final class Binding {
+
         private final String name;
         private final Node value;
 
@@ -33,7 +33,9 @@ public final class LetNode implements Node {
          */
         public Binding(String name, Node value) {
             if (name == null || name.isEmpty()) {
-                throw new IllegalArgumentException("name cannot be null or empty");
+                throw new IllegalArgumentException(
+                    "name cannot be null or empty"
+                );
             }
             if (value == null) {
                 throw new IllegalArgumentException("value cannot be null");
@@ -77,7 +79,9 @@ public final class LetNode implements Node {
      */
     public LetNode(List<Binding> bindings, Node body) {
         if (bindings == null || bindings.isEmpty()) {
-            throw new IllegalArgumentException("bindings cannot be null or empty");
+            throw new IllegalArgumentException(
+                "bindings cannot be null or empty"
+            );
         }
         if (body == null) {
             throw new IllegalArgumentException("body cannot be null");
@@ -116,6 +120,11 @@ public final class LetNode implements Node {
 
         // Evaluate body in the extended scope
         return body.evaluate(runtime, current, newScope);
+    }
+
+    @Override
+    public boolean isProjection() {
+        return false;
     }
 
     @Override

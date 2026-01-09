@@ -56,6 +56,11 @@ public final class PipeNode implements Node {
     }
 
     @Override
+    public boolean isProjection() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return left + " | " + right;
     }

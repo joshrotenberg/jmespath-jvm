@@ -110,6 +110,11 @@ public final class FunctionCallNode implements Node {
     }
 
     @Override
+    public boolean isProjection() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(name);
         sb.append("(");
