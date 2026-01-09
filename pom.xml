@@ -1,19 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.joshrotenberg</groupId>
     <artifactId>jmespath-jvm</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>jmespath-jvm</name>
-    <description
-    >A fast, spec-compliant JMESPath implementation for the JVM with zero dependencies</description>
+    <description>A fast, spec-compliant JMESPath implementation for the JVM with zero dependencies</description>
     <url>https://github.com/jmespath/jmespath-jvm</url>
     <inceptionYear>2024</inceptionYear>
 
@@ -39,10 +34,8 @@
     </developers>
 
     <scm>
-        <connection
-        >scm:git:git://github.com/jmespath/jmespath-jvm.git</connection>
-        <developerConnection
-        >scm:git:ssh://github.com:jmespath/jmespath-jvm.git</developerConnection>
+        <connection>scm:git:git://github.com/jmespath/jmespath-jvm.git</connection>
+        <developerConnection>scm:git:ssh://github.com:jmespath/jmespath-jvm.git</developerConnection>
         <url>https://github.com/jmespath/jmespath-jvm</url>
     </scm>
 
@@ -98,8 +91,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <addDefaultImplementationEntries
-                            >true</addDefaultImplementationEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
                 </configuration>
