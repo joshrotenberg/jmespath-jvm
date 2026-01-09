@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.1](https://github.com/joshrotenberg/jmespath-jvm/compare/v1.0.0...v1.0.1) (2026-01-09)
+
+
+### Bug Fixes
+
+* pass empty gpg passphrase for signing ([#4](https://github.com/joshrotenberg/jmespath-jvm/issues/4)) ([f2433c6](https://github.com/joshrotenberg/jmespath-jvm/commit/f2433c6106371219b675553951e6a57b24dca3e0))
+
+
+### Documentation
+
+* add 'Why Another JMESPath Library?' section to README ([#5](https://github.com/joshrotenberg/jmespath-jvm/issues/5)) ([761d65f](https://github.com/joshrotenberg/jmespath-jvm/commit/761d65f1444fc13749795333203253f7f33e6f60))
+
 ## 1.0.0 (2026-01-09)
 
 
