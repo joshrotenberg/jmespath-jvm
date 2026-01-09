@@ -64,6 +64,11 @@ public final class IdentifierNode implements Node {
     }
 
     @Override
+    public boolean isProjection() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return name;
     }

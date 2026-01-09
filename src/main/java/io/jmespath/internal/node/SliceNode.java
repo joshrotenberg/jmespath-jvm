@@ -139,6 +139,11 @@ public final class SliceNode implements Node {
     }
 
     @Override
+    public boolean isProjection() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[");
         if (hasStart) {

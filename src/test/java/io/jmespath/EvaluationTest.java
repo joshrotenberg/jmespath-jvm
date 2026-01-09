@@ -1,19 +1,19 @@
 package io.jmespath;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import io.jmespath.internal.CompiledExpression;
 import io.jmespath.internal.Parser;
+import io.jmespath.internal.Scope;
 import io.jmespath.internal.node.Node;
 import io.jmespath.runtime.MapRuntime;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 /**
  * End-to-end evaluation tests.
@@ -30,7 +30,7 @@ class EvaluationTest {
     private Object evaluate(String expression, Object data) {
         Parser parser = new Parser(expression);
         Node root = parser.parse();
-        return root.evaluate(runtime, data);
+        return root.evaluate(runtime, data, Scope.empty());
     }
 
     private Map<String, Object> obj(Object... kvs) {
@@ -159,19 +159,16 @@ class EvaluationTest {
 
         @Test
         void arrayWildcard() {
-            Object data = obj("people", arr(
-                obj("name", "Alice"),
-                obj("name", "Bob")
-            ));
+            Object data = obj(
+                "people",
+                arr(obj("name", "Alice"), obj("name", "Bob"))
+            );
             assertEquals(arr("Alice", "Bob"), evaluate("people[*].name", data));
         }
 
         @Test
         void objectWildcard() {
-            Object data = obj(
-                "a", obj("val", 1),
-                "b", obj("val", 2)
-            );
+            Object data = obj("a", obj("val", 1), "b", obj("val", 2));
             List<?> result = (List<?>) evaluate("*.val", data);
             assertEquals(2, result.size());
             assertTrue(result.contains(1));
@@ -180,10 +177,13 @@ class EvaluationTest {
 
         @Test
         void wildcardFiltersNull() {
-            Object data = obj("arr", arr(
-                obj("name", "Alice"),
-                obj("age", 30)  // no name
-            ));
+            Object data = obj(
+                "arr",
+                arr(
+                    obj("name", "Alice"),
+                    obj("age", 30) // no name
+                )
+            );
             // Only returns non-null values
             assertEquals(arr("Alice"), evaluate("arr[*].name", data));
         }
@@ -229,7 +229,10 @@ class EvaluationTest {
                 obj("active", true, "age", 17),
                 obj("active", false, "age", 30)
             );
-            List<?> result = (List<?>) evaluate("[?active && age > `18`]", data);
+            List<?> result = (List<?>) evaluate(
+                "[?active && age > `18`]",
+                data
+            );
             assertEquals(1, result.size());
         }
     }
@@ -344,10 +347,10 @@ class EvaluationTest {
 
         @Test
         void pipeStopsProjection() {
-            Object data = obj("arr", arr(
-                obj("name", "Alice"),
-                obj("name", "Bob")
-            ));
+            Object data = obj(
+                "arr",
+                arr(obj("name", "Alice"), obj("name", "Bob"))
+            );
             // Without pipe, [*].name would project
             // With pipe, [0] gets first element of the projected array
             assertEquals("Alice", evaluate("arr[*].name | [0]", data));
@@ -366,7 +369,10 @@ class EvaluationTest {
         @Test
         void multiSelectWithExpressions() {
             Object data = obj("person", obj("first", "John", "last", "Doe"));
-            assertEquals(arr("John", "Doe"), evaluate("[person.first, person.last]", data));
+            assertEquals(
+                arr("John", "Doe"),
+                evaluate("[person.first, person.last]", data)
+            );
         }
     }
 
@@ -376,7 +382,10 @@ class EvaluationTest {
         @Test
         void simpleHash() {
             Object data = obj("firstName", "John", "lastName", "Doe");
-            Object result = evaluate("{first: firstName, last: lastName}", data);
+            Object result = evaluate(
+                "{first: firstName, last: lastName}",
+                data
+            );
             assertTrue(result instanceof Map);
             @SuppressWarnings("unchecked")
             Map<String, Object> map = (Map<String, Object>) result;
@@ -459,32 +468,44 @@ class EvaluationTest {
 
         @Test
         void filterAndProject() {
-            Object data = obj("people", arr(
-                obj("name", "Alice", "age", 30, "active", true),
-                obj("name", "Bob", "age", 25, "active", false),
-                obj("name", "Charlie", "age", 35, "active", true)
-            ));
-            List<?> result = (List<?>) evaluate("people[?active && age > `28`].name", data);
+            Object data = obj(
+                "people",
+                arr(
+                    obj("name", "Alice", "age", 30, "active", true),
+                    obj("name", "Bob", "age", 25, "active", false),
+                    obj("name", "Charlie", "age", 35, "active", true)
+                )
+            );
+            List<?> result = (List<?>) evaluate(
+                "people[?active && age > `28`].name",
+                data
+            );
             assertEquals(arr("Alice", "Charlie"), result);
         }
 
         @Test
         void multipleProjections() {
-            Object data = obj("data", arr(
-                obj("items", arr("a", "b")),
-                obj("items", arr("c", "d"))
-            ));
+            Object data = obj(
+                "data",
+                arr(obj("items", arr("a", "b")), obj("items", arr("c", "d")))
+            );
             // This should flatten: [["a","b"],["c","d"]] -> ["a","b","c","d"]
-            assertEquals(arr("a", "b", "c", "d"), evaluate("data[*].items[]", data));
+            assertEquals(
+                arr("a", "b", "c", "d"),
+                evaluate("data[*].items[]", data)
+            );
         }
 
         @Test
         void hashWithProjection() {
-            Object data = obj("items", arr(
-                obj("id", 1, "name", "foo"),
-                obj("id", 2, "name", "bar")
-            ));
-            List<?> result = (List<?>) evaluate("items[*].{identifier: id, label: name}", data);
+            Object data = obj(
+                "items",
+                arr(obj("id", 1, "name", "foo"), obj("id", 2, "name", "bar"))
+            );
+            List<?> result = (List<?>) evaluate(
+                "items[*].{identifier: id, label: name}",
+                data
+            );
             assertEquals(2, result.size());
         }
     }

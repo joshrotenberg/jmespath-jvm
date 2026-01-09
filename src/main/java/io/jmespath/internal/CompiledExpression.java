@@ -40,7 +40,7 @@ public final class CompiledExpression<T> implements Expression<T> {
         if (runtime == null) {
             throw new IllegalArgumentException("runtime cannot be null");
         }
-        return root.evaluate(runtime, data);
+        return root.evaluate(runtime, data, Scope.empty());
     }
 
     @Override

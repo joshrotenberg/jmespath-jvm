@@ -15,21 +15,6 @@ import io.jmespath.internal.Scope;
  */
 public interface Node {
     /**
-     * Evaluates this node against the given value with an empty scope.
-     *
-     * <p>This is a convenience method equivalent to calling
-     * {@code evaluate(runtime, current, Scope.empty())}.
-     *
-     * @param <T> the JSON value type used by the runtime
-     * @param runtime the runtime adapter for JSON operations
-     * @param current the current JSON value being evaluated
-     * @return the result of evaluating this node
-     */
-    default <T> T evaluate(Runtime<T> runtime, T current) {
-        return evaluate(runtime, current, Scope.empty());
-    }
-
-    /**
      * Evaluates this node against the given value with variable scope.
      *
      * @param <T> the JSON value type used by the runtime
@@ -43,22 +28,7 @@ public interface Node {
     /**
      * Returns true if this node creates a projection.
      *
-     * <p>Projections cause subsequent expressions to be applied
-     * to each element of an array result, rather than to the
-     * array as a whole.
-     *
      * @return true if this is a projection node
      */
-    default boolean isProjection() {
-        return false;
-    }
-
-    /**
-     * Accepts a visitor for tree traversal.
-     *
-     * @param visitor the visitor
-     */
-    default void accept(NodeVisitor visitor) {
-        visitor.visit(this);
-    }
+    boolean isProjection();
 }

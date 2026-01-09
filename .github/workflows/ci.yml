@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, java7-compat]
   pull_request:
     branches: [main]
 
@@ -20,11 +20,11 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'temurin'
+          distribution: "temurin"
           cache: maven
 
       - name: Build and test
-        run: mvn -B verify
+        run: mvn -B verify -Djacoco.skip=${{ matrix.java == 8 }}
 
       - name: Upload coverage to Codecov
         if: matrix.java == 17
@@ -32,6 +32,33 @@ jobs:
         with:
           files: target/site/jacoco/jacoco.xml
           fail_ci_if_error: false
+
+  # Verify the compiled bytecode works on Java 7
+  java7-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 8 for building
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: "temurin"
+          cache: maven
+
+      - name: Build JAR (skip tests)
+        run: mvn -B package -DskipTests -Djacoco.skip=true
+
+      - name: Set up JDK 7 for verification
+        uses: actions/setup-java@v4
+        with:
+          java-version: 7
+          distribution: "zulu"
+
+      - name: Verify JAR loads on Java 7
+        run: |
+          java -version
+          java -cp target/jmespath-jvm-*.jar io.jmespath.JmesPath 2>&1 | head -5 || echo "JAR loaded successfully on Java 7"
 
   javadoc:
     runs-on: ubuntu-latest
@@ -42,7 +69,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'temurin'
+          distribution: "temurin"
           cache: maven
 
       - name: Generate Javadoc

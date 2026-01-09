@@ -289,7 +289,5 @@ public interface Runtime<T> {
      *
      * @return true if type errors should return null instead of throwing
      */
-    default boolean isSilentTypeErrors() {
-        return false;
-    }
+    boolean isSilentTypeErrors();
 }
